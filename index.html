@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Amigo invisible</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Young+Serif&family=Figtree:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: cálida, festiva, de andar por casa; instrucciones claras.
+   IDEA: un paquete envuelto en papel rojo con lazo; la tarjeta de regalo es el formulario.
+   PICTURE: caja de regalo SVG con lazo; en el enlace secreto la tapa se levanta y sale el nombre.
+   COLOUR and TYPE: rojo papel de regalo dominante, verde abeto de apoyo, dorado lazo de acento; Young Serif + Figtree.
+   LAYOUT: banda roja con título y caja; debajo una tarjeta crema de una columna: participantes, sorteo, envíos. */
+:root{color-scheme:light dark;--bg:light-dark(#f6efe4,#1d1214);--card:light-dark(#fffaf2,#2a1b1e);--ink:light-dark(#2a1517,#f6ebe3);--mute:light-dark(#6f5a55,#c4ada6);--red:#b3122e;--red2:#8c0c22;--green:light-dark(#1f5c3f,#5fb68a);--gold:#e2b13c;--line:light-dark(#e6d9c8,#46302f)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
+h1,h2{font-family:"Young Serif",Georgia,serif;font-weight:400;line-height:1.05;text-wrap:balance;margin:0}
+.hero{background:var(--red);color:#fff6ec;padding:clamp(24px,4vw,48px) max(5vw,16px) 0;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(135deg,transparent 0 22px,rgba(255,255,255,.05) 22px 24px)}
+.hin{position:relative;max-width:760px;margin:auto;display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:end}
+.hero h1{font-size:clamp(34px,6vw,52px)}
+.hero p{margin:10px 0 24px;max-width:34ch;color:#ffe1d6}
+.gift{width:100%;max-width:260px;justify-self:end;display:block}
+main{max-width:760px;margin:-8px auto 0;padding:0 max(4vw,12px) 48px;position:relative}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:clamp(18px,3vw,28px);margin-top:18px;box-shadow:0 10px 30px -18px rgba(80,10,20,.35)}
+.card h2{font-size:24px;margin-bottom:4px}
+.hint{color:var(--mute);font-size:14px;margin:0 0 14px}
+label{font-size:14px;font-weight:600;display:block;margin-bottom:4px}
+input,select{font:inherit;font-size:16px;width:100%;min-height:44px;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+input:focus,select:focus,button:focus-visible,a:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.row{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) auto;gap:8px;align-items:end}
+.opts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px;margin-bottom:14px}
+button,.btn{font:inherit;font-weight:700;min-height:44px;padding:10px 18px;border-radius:999px;border:0;cursor:pointer;background:var(--green);color:#fff;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+:root button.ghost{background:transparent;color:var(--mute);border:1px solid var(--line)}
+.big{background:var(--red);width:100%;font-size:18px;margin-top:16px}
+.big:disabled{opacity:.45;cursor:not-allowed}
+ul{list-style:none;margin:14px 0 0;padding:0}
+li.p{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,150px) 44px;gap:8px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+li.p b{display:block}li.p span{color:var(--mute);font-size:14px;white-space:nowrap}
+li.p select{min-height:40px;font-size:14px}
+.x{background:transparent;color:var(--mute);border:1px solid var(--line);padding:0;width:44px}
+.empty{color:var(--mute);text-align:center;padding:18px 0 6px}
+.err{color:var(--red);font-weight:600;min-height:1.4em;margin:8px 0 0;font-size:14px}
+li.s{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-top:1px solid var(--line)}
+li.s.done b{text-decoration:line-through;color:var(--mute)}
+.wa{background:#1f8f4e}
+.note{font-size:13px;color:var(--mute);margin-top:12px}
+/* revelación */
+.reveal{min-height:100vh;display:grid;place-items:center;text-align:center;background:var(--red);color:#fff6ec;padding:24px}
+.reveal h1{font-size:clamp(30px,6vw,44px);margin-bottom:6px}
+.reveal .name{font-family:"Young Serif",serif;font-size:clamp(40px,11vw,72px);line-height:1.05;color:var(--gold);margin:6px 0 10px;overflow-wrap:anywhere}
+.reveal svg{width:min(260px,70vw);cursor:pointer;display:block;margin:18px auto}
+#lid{transition:transform .9s cubic-bezier(.3,1.4,.5,1);transform-origin:130px 110px}
+.open #lid{transform:translateY(-70px) rotate(-14deg)}
+.meta{color:#ffd9cd;font-size:15px}
+.hidden{display:none!important}
+@media(prefers-reduced-motion:reduce){#lid{transition:none}}
+@media(max-width:600px){.hin{grid-template-columns:1fr}.gift{justify-self:center;max-width:200px}.row{grid-template-columns:1fr 1fr}.row button{grid-column:1/-1}.opts{grid-template-columns:1fr}li.p{grid-template-columns:minmax(0,1fr) 44px}li.p select{grid-column:1/-1;grid-row:2}}
+</style></head><body>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<g id="box"><rect x="30" y="120" width="200" height="130" rx="8" fill="#fff6ec"/><rect x="30" y="120" width="200" height="22" fill="#000" opacity=".08"/><rect x="115" y="120" width="30" height="130" fill="#e2b13c"/><rect x="141" y="120" width="4" height="130" fill="#000" opacity=".12"/></g>
+<g id="lidg"><rect x="20" y="90" width="220" height="36" rx="6" fill="#fffaf2"/><rect x="20" y="116" width="220" height="10" fill="#000" opacity=".08"/><rect x="113" y="90" width="34" height="36" fill="#e2b13c"/><path d="M130 90c-30-40-70-30-58-6 8 16 40 10 58 6z" fill="#e2b13c"/><path d="M130 90c30-40 70-30 58-6-8 16-40 10-58 6z" fill="#d19f2a"/><circle cx="130" cy="88" r="9" fill="#c38f1f"/></g>
+</defs></svg>
+
+<div id="app">
+<header class="hero"><div class="hin">
+<div><h1>Amigo invisible</h1><p>Apunta a la gente, haz el sorteo y envía a cada uno su enlace secreto por WhatsApp.</p></div>
+<svg class="gift" viewBox="0 0 260 260" aria-hidden="true"><ellipse cx="130" cy="252" rx="110" ry="8" fill="#000" opacity=".18"/><use href="#box"/><use href="#lidg"/></svg>
+</div></header>
+<main>
+<section class="card" id="setup">
+<h2>Participantes</h2>
+<p class="hint">Mínimo 3. Si una pareja no debe tocarse entre sí, márcalo en «No le puede tocar».</p>
+<div class="opts">
+<div><label for="budget">Presupuesto (opcional)</label><input id="budget" placeholder="Ej. 20 €"></div>
+<div><label for="date">Fecha del intercambio (opcional)</label><input id="date" placeholder="Ej. 24 de diciembre"></div>
+</div>
+<form id="add" class="row">
+<div><label for="nm">Nombre</label><input id="nm" autocomplete="off" required></div>
+<div><label for="ph">Teléfono</label><input id="ph" type="tel" inputmode="tel" placeholder="600 123 456" required></div>
+<button type="submit">Añadir</button>
+</form>
+<p class="err" id="err"></p>
+<ul id="list"></ul>
+<button class="big" id="draw" disabled>Hacer el sorteo</button>
+</section>
+
+<section class="card hidden" id="send">
+<h2>Sorteo hecho</h2>
+<p class="hint">Pulsa cada botón: se abre WhatsApp con el mensaje listo para ese participante. El nombre va cifrado dentro del enlace, así que no lo verás al enviarlo.</p>
+<ul id="sends"></ul>
+<p class="note">Los teléfonos sin prefijo se envían como números de España (+34).</p>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px"><button class="ghost" id="redo">Repetir sorteo</button><button class="ghost" id="edit">Editar participantes</button></div>
+</section>
+</main>
+</div>
+
+<div id="rv" class="reveal hidden"><div>
+<h1 id="hi">¡Hola!</h1>
+<p class="meta" id="tap">Toca el regalo para descubrir a quién le haces el regalo</p>
+<svg id="rgift" viewBox="0 0 260 260" role="button" aria-label="Abrir regalo" tabindex="0"><ellipse cx="130" cy="252" rx="110" ry="8" fill="#000" opacity=".2"/><use href="#box"/><g id="lid"><use href="#lidg"/></g></svg>
+<div id="res" class="hidden"><p class="meta">Te ha tocado</p><div class="name" id="who"></div><p class="meta" id="extra"></p><p class="meta">Guarda el secreto 🤫</p></div>
+</div></div>
+
+<script>
+{
+const BASE=location.origin+location.pathname;
+const KEY="amigo-invisible-2026";
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const enc=o=>{const b=new TextEncoder().encode(JSON.stringify(o));let h="r";b.forEach((x,i)=>{h+=((x^KEY.charCodeAt(i%KEY.length))&255).toString(16).padStart(2,"0")});return h};
+const dec=h=>{const b=new Uint8Array((h.length-1)/2);for(let i=0;i<b.length;i++)b[i]=parseInt(h.substr(1+i*2,2),16)^KEY.charCodeAt(i%KEY.length);return JSON.parse(new TextDecoder().decode(b))};
+
+const hash=location.hash.slice(1);
+if(/^r[0-9a-f]+$/.test(hash)){
+  try{
+    const d=dec(hash);
+    $("app").classList.add("hidden");$("rv").classList.remove("hidden");
+    $("hi").textContent="¡Hola, "+d.g+"!";
+    $("who").textContent=d.r;
+    $("extra").textContent=[d.b?"Presupuesto: "+d.b:"",d.d?"Intercambio: "+d.d:""].filter(Boolean).join(" · ");
+    const open=()=>{$("rv").classList.add("open");$("tap").classList.add("hidden");setTimeout(()=>$("res").classList.remove("hidden"),450)};
+    $("rgift").addEventListener("click",open);
+    $("rgift").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});
+  }catch(e){}
+}
+
+let S={people:[],budget:"",date:"",result:null,sent:[]};
+try{const s=JSON.parse(localStorage.getItem("ai-state"));if(s)S=Object.assign(S,s)}catch(e){}
+const save=()=>{try{localStorage.setItem("ai-state",JSON.stringify(S))}catch(e){}};
+$("budget").value=S.budget;$("date").value=S.date;
+$("budget").addEventListener("input",e=>{S.budget=e.target.value;save()});
+$("date").addEventListener("input",e=>{S.date=e.target.value;save()});
+
+const normPhone=p=>{let d=p.replace(/[^\d+]/g,"");if(d.startsWith("+"))return d.slice(1);if(d.startsWith("00"))return d.slice(2);if(d.length===9)return "34"+d;return d};
+
+function render(){
+  const L=$("list");
+  L.innerHTML=S.people.length?S.people.map((p,i)=>`<li class="p"><div><b>${esc(p.n)}</b><span>${esc(p.t)}</span></div>
+  <select data-i="${i}" aria-label="No le puede tocar a ${esc(p.n)}"><option value="">No le puede tocar…</option>${S.people.map((q,j)=>j===i?"":`<option value="${j}" ${p.x===j?"selected":""}>${esc(q.n)}</option>`).join("")}</select>
+  <button class="x" data-del="${i}" aria-label="Quitar ${esc(p.n)}">✕</button></li>`).join(""):`<li class="empty">Aún no hay nadie apuntado.</li>`;
+  $("draw").disabled=S.people.length<3;
+  $("draw").textContent=S.people.length<3?`Hacer el sorteo (faltan ${3-S.people.length})`:`Hacer el sorteo entre ${S.people.length}`;
+  if(S.result){$("setup").classList.add("hidden");$("send").classList.remove("hidden");renderSends()}
+  else{$("setup").classList.remove("hidden");$("send").classList.add("hidden")}
+}
+function renderSends(){
+  $("sends").innerHTML=S.result.map((r,i)=>{const g=S.people[i],to=S.people[r];
+    const link=BASE+"#"+enc({g:g.n,r:to.n,b:S.budget,d:S.date});
+    const msg=`🎁 ¡Hola ${g.n}! Ya está hecho el sorteo del amigo invisible. Abre este enlace para ver a quién le haces el regalo (no se lo enseñes a nadie):\n${link}`;
+    const wa="https://wa.me/"+normPhone(g.t)+"?text="+encodeURIComponent(msg);
+    return `<li class="s ${S.sent.includes(i)?"done":""}"><div><b>${esc(g.n)}</b><br><span class="hint">${esc(g.t)}</span></div><a class="btn wa" href="${wa}" target="_blank" rel="noopener" data-s="${i}">${S.sent.includes(i)?"Reenviar":"Enviar por WhatsApp"}</a></li>`}).join("");
+}
+function draw(){
+  const n=S.people.length,idx=[...Array(n).keys()];
+  for(let t=0;t<5000;t++){
+    const a=idx.slice();for(let i=n-1;i>0;i--){const j=crypto.getRandomValues(new Uint32Array(1))[0]%(i+1);[a[i],a[j]]=[a[j],a[i]]}
+    if(a.every((r,i)=>r!==i&&S.people[i].x!==r))return a;
+  }
+  return null;
+}
+
+$("add").addEventListener("submit",e=>{e.preventDefault();
+  const n=$("nm").value.trim(),t=$("ph").value.trim();
+  if(!n||!t)return;
+  if(S.people.some(p=>p.n.toLowerCase()===n.toLowerCase())){$("err").textContent="Ese nombre ya está. Añade el apellido para distinguirlos.";return}
+  if(normPhone(t).replace(/\D/g,"").length<9){$("err").textContent="Revisa el teléfono.";return}
+  $("err").textContent="";S.people.push({n,t,x:null});save();render();$("nm").value="";$("ph").value="";$("nm").focus();
+});
+$("list").addEventListener("click",e=>{const d=e.target.closest("[data-del]");if(!d)return;const i=+d.dataset.del;
+  S.people.splice(i,1);S.people.forEach(p=>{if(p.x===i)p.x=null;else if(p.x>i)p.x--});save();render()});
+$("list").addEventListener("change",e=>{const s=e.target.closest("select[data-i]");if(!s)return;S.people[+s.dataset.i].x=s.value===""?null:+s.value;save()});
+$("draw").addEventListener("click",()=>{const r=draw();
+  if(!r){$("err").textContent="Con esas restricciones no hay sorteo posible. Quita alguna.";return}
+  $("err").textContent="";S.result=r;S.sent=[];save();render();window.scrollTo(0,0)});
+$("sends").addEventListener("click",e=>{const a=e.target.closest("[data-s]");if(!a)return;const i=+a.dataset.s;if(!S.sent.includes(i))S.sent.push(i);save();setTimeout(renderSends,300)});
+$("redo").addEventListener("click",()=>{if(S.sent.length&&!$("redo").dataset.ok){$("redo").dataset.ok=1;$("redo").textContent="Ya enviaste enlaces. Pulsa otra vez para confirmar";return}
+  delete $("redo").dataset.ok;$("redo").textContent="Repetir sorteo";const r=draw();if(r){S.result=r;S.sent=[];save();render()}});
+$("edit").addEventListener("click",()=>{S.result=null;S.sent=[];save();render()});
+render();
+}
+</script>
+</body></html>
