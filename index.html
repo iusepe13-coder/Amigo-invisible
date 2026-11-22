@@ -53,6 +53,12 @@ li.s.done b{text-decoration:line-through;color:var(--mute)}
 #lid{transition:transform .9s cubic-bezier(.3,1.4,.5,1);transform-origin:130px 110px}
 .open #lid{transform:translateY(-70px) rotate(-14deg)}
 .meta{color:#ffd9cd;font-size:15px}
+.ideas{margin:22px auto 0;max-width:460px;background:rgba(0,0,0,.16);border-radius:16px;padding:16px;text-align:left}
+.ideas h2{font-size:22px;margin-bottom:4px;color:#fff6ec}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.chips a{background:#fff6ec;color:#8c0c22;font-weight:700;text-decoration:none;border-radius:999px;padding:10px 14px;min-height:44px;display:inline-flex;align-items:center;font-size:15px}
+.cta{margin-top:20px;background:var(--gold);color:#2a1517}
+.disc{font-size:13px;color:#ffd9cd;margin-top:10px}
 .hidden{display:none!important}
 @media(prefers-reduced-motion:reduce){#lid{transition:none}}
 @media(max-width:600px){.hin{grid-template-columns:1fr}.gift{justify-self:center;max-width:200px}.row{grid-template-columns:1fr 1fr}.row button{grid-column:1/-1}.opts{grid-template-columns:1fr}li.p{grid-template-columns:minmax(0,1fr) 44px}li.p select{grid-column:1/-1;grid-row:2}}
@@ -100,7 +106,10 @@ li.s.done b{text-decoration:line-through;color:var(--mute)}
 <h1 id="hi">¡Hola!</h1>
 <p class="meta" id="tap">Toca el regalo para descubrir a quién le haces el regalo</p>
 <svg id="rgift" viewBox="0 0 260 260" role="button" aria-label="Abrir regalo" tabindex="0"><ellipse cx="130" cy="252" rx="110" ry="8" fill="#000" opacity=".2"/><use href="#box"/><g id="lid"><use href="#lidg"/></g></svg>
-<div id="res" class="hidden"><p class="meta">Te ha tocado</p><div class="name" id="who"></div><p class="meta" id="extra"></p><p class="meta">Guarda el secreto 🤫</p></div>
+<div id="res" class="hidden"><p class="meta">Te ha tocado</p><div class="name" id="who"></div><p class="meta" id="extra"></p><p class="meta">Guarda el secreto 🤫</p>
+<div class="ideas"><h2>¿Sin ideas?</h2><p class="meta" id="ideasub" style="margin:0">Regalos que suelen acertar:</p><div class="chips" id="chips"></div>
+<p class="disc">Como afiliado de Amazon, esta web obtiene ingresos por las compras adscritas que cumplen los requisitos aplicables.</p></div>
+<a class="btn cta" id="own" href="./">Organiza tu propio sorteo gratis</a></div>
 </div></div>
 
 <script>
@@ -120,6 +129,11 @@ if(/^r[0-9a-f]+$/.test(hash)){
     $("hi").textContent="¡Hola, "+d.g+"!";
     $("who").textContent=d.r;
     $("extra").textContent=[d.b?"Presupuesto: "+d.b:"",d.d?"Intercambio: "+d.d:""].filter(Boolean).join(" · ");
+    const TAG="";
+    const max=parseFloat(String(d.b||"").replace(",",".").replace(/[^\d.]/g,""))||0;
+    $("ideasub").textContent=max?`Ideas de hasta ${max} € en Amazon:`:"Ideas que suelen acertar en Amazon:";
+    const IDEAS=[["🎧 Tecnología","regalo gadget tecnologia"],["🍫 Gourmet","cesta regalo gourmet"],["📚 Libros","libros mas vendidos regalo"],["🎲 Juegos","juego de mesa"],["🧴 Cuidado personal","set regalo cuidado personal"],["🏠 Hogar","regalo original hogar"],["😂 De broma","regalo divertido original"],["🧸 Para niños","juguete regalo niño"]];
+    $("chips").innerHTML=IDEAS.map(([l,q])=>{const u=new URL("https://www.amazon.es/s");u.searchParams.set("k",q);if(max)u.searchParams.set("high-price",max);if(TAG)u.searchParams.set("tag",TAG);return `<a href="${u}" target="_blank" rel="sponsored noopener">${l}</a>`}).join("");
     const open=()=>{$("rv").classList.add("open");$("tap").classList.add("hidden");setTimeout(()=>$("res").classList.remove("hidden"),450)};
     $("rgift").addEventListener("click",open);
     $("rgift").addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();open()}});
