@@ -129,7 +129,7 @@ if(/^r[0-9a-f]+$/.test(hash)){
     $("hi").textContent="¡Hola, "+d.g+"!";
     $("who").textContent=d.r;
     $("extra").textContent=[d.b?"Presupuesto: "+d.b:"",d.d?"Intercambio: "+d.d:""].filter(Boolean).join(" · ");
-    const TAG="";
+    const TAG="amigoinvis023-21";
     const max=parseFloat(String(d.b||"").replace(",",".").replace(/[^\d.]/g,""))||0;
     $("ideasub").textContent=max?`Ideas de hasta ${max} € en Amazon:`:"Ideas que suelen acertar en Amazon:";
     const IDEAS=[["🎧 Tecnología","regalo gadget tecnologia"],["🍫 Gourmet","cesta regalo gourmet"],["📚 Libros","libros mas vendidos regalo"],["🎲 Juegos","juego de mesa"],["🧴 Cuidado personal","set regalo cuidado personal"],["🏠 Hogar","regalo original hogar"],["😂 De broma","regalo divertido original"],["🧸 Para niños","juguete regalo niño"]];
